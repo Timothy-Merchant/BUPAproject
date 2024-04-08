@@ -8,10 +8,12 @@
     <div class="col-md-4 mt-3">
         <EditForm Model="Model"
                   FormName="searchVehicles"
-                  OnSubmit="SearchVehiclesAsync">
+                  OnValidSubmit="SearchVehiclesAsync">
+            <DataAnnotationsValidator />
             <div class="mb-3">
                 <label for="registrationNumber" class="form-label">Please enter your Registration Number:</label>
                 <InputText id="registrationNumber" @bind-Value="Model!.registrationNumber" class="form-control" />
+                <ValidationMessage For="() => Model.registrationNumber"/>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
             <a role="button" class="btn btn-secondary" href="/">Clear</a>
@@ -60,7 +62,10 @@
 
     private VehicleDTO? vehicle;
 
-    protected override void OnInitialized() => Model ??= new();
+    protected override void OnInitialized() => Model ??= new UserInput()
+        {
+            registrationNumber = ""
+        };
 
     private async Task SearchVehiclesAsync() => vehicle = await Client.GetVehicleAsync(Model?.registrationNumber ?? "");
-    }
+}
